@@ -1,10 +1,10 @@
 {
-  "name": "@buildshipapp/chat-widget",
-  "version": "1.4.1",
-  "description": "A chat widget that can be paired with BuildShip workflows built using the Assistant API.",
+  "name": "@assistable-ai/chatwidget",
+  "version": "1.0.0",
+  "description": "A chat widget that can be paired with Assistable workflows built using the Assistant API.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rowyio/buildship-chat-widget.git"
+    "url": "https://github.com/assistable-ai/chatwidget.git"
   },
   "keywords": [
     "buildship",
