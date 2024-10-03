@@ -11,6 +11,11 @@ const WIDGET_MESSAGES_HISTORY_CONTAINER_ID =
   "buildship-chat-widget__messages_history";
 const WIDGET_THINKING_BUBBLE_ID = "buildship-chat-widget__thinking_bubble";
 
+function getLocationIdFromUrl(): string | null {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('locationid');
+}
+
 export type WidgetConfig = {
   url: string;
   threadId: string | null;
@@ -21,6 +26,7 @@ export type WidgetConfig = {
   disableErrorAlert: boolean;
   closeOnOutsideClick: boolean;
   openOnLoad: boolean;
+  location_id: string | null;
 };
 
 const renderer = new marked.Renderer();
@@ -41,6 +47,7 @@ const config: WidgetConfig = {
   disableErrorAlert: false,
   closeOnOutsideClick: true,
   openOnLoad: false,
+  location_id: null,
   ...(window as any).buildShipChatWidget?.config,
 };
 
@@ -51,6 +58,8 @@ async function init() {
   styleElement.innerHTML = css;
 
   document.head.insertBefore(styleElement, document.head.firstChild);
+
+  config.location_id = getLocationIdFromUrl();
 
   // Slight delay to allow DOMContent to be fully loaded
   // (particularly for the button to be available in the `if (config.openOnLoad)` block below).
@@ -321,6 +330,7 @@ async function submit(e: Event) {
     message: (target.elements as any).message.value,
     threadId: config.threadId,
     timestamp: Date.now(),
+    location_id: config.location_id
   };
 
   await createNewMessageEntry(data.message, data.timestamp, "user");
@@ -352,8 +362,18 @@ async function submit(e: Event) {
   return false;
 }
 
-const buildShipChatWidget = { open, close, config, init };
+const buildShipChatWidget = { 
+  open, 
+  close, 
+  config, 
+  init,
+  setLocationId: (id: string) => {
+    config.location_id = id;
+  }
+};
+
 (window as any).buildShipChatWidget = buildShipChatWidget;
+
 declare global {
   interface Window {
     buildShipChatWidget: typeof buildShipChatWidget;
