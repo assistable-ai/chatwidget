@@ -77,7 +77,9 @@
   position: fixed;
   z-index: 9999;
   width: 25rem;
+  max-width: calc(100vw - 48px); /* 24px padding on each side */
   height: 40rem;
+  max-height: calc(100vh - 100px); /* Adjust based on your needs */
   box-sizing: border-box;
   background-color: var(--buildship-chat-widget-bg-color);
   box-shadow: var(--buildship-chat-widget-shadow);
@@ -85,9 +87,7 @@
   font-family: inherit;
   font-size: 1rem;
   color: var(--buildship-chat-widget-primary-color-text);
-  bottom: 80px; /* Adjust this value based on your button's height plus desired spacing */
-  right: 24px; /* Match this with your button's right positioning */
-  transition: all 0.3s ease; /* Smooth transition when opening/closing */
+  transition: all 0.3s ease;
 }
 #buildship-chat-widget__container * {
   box-sizing: border-box;
@@ -331,9 +331,12 @@
 @media (max-width: 480px) {
   #buildship-chat-widget__container {
     width: 100%;
-    height: 100%;
-    bottom: 0;
-    right: 0;
-    border-radius: 0;
+    height: calc(100% - 60px); /* Adjust based on your button's height */
+    max-width: 100%;
+    max-height: none;
+    bottom: 60px !important; /* Adjust based on your button's height */
+    right: 0 !important;
+    left: 0 !important;
+    border-radius: var(--buildship-chat-widget-border-radius) var(--buildship-chat-widget-border-radius) 0 0;
   }
 }

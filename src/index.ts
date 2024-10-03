@@ -100,6 +100,29 @@ const trap = createFocusTrap(containerElement, {
   allowOutsideClick: true,
 });
 
+function positionWidget() {
+  const button = document.querySelector("[data-buildship-chat-widget-button]") as HTMLElement;
+  if (button) {
+    const buttonRect = button.getBoundingClientRect();
+    const containerRect = containerElement.getBoundingClientRect();
+    
+    Object.assign(containerElement.style, {
+      bottom: `${window.innerHeight - buttonRect.top + 10}px`, // 10px gap
+      right: `${window.innerWidth - buttonRect.right}px`,
+      left: 'auto',
+      top: 'auto'
+    });
+  } else {
+    // Fallback positioning if button is not found
+    Object.assign(containerElement.style, {
+      bottom: '80px',
+      right: '24px',
+      left: 'auto',
+      top: 'auto'
+    });
+  }
+}
+
 function open(e: Event) {
   if (config.closeOnOutsideClick) {
     document.body.appendChild(optionalBackdrop);
@@ -123,19 +146,8 @@ function open(e: Event) {
     createNewMessageEntry(config.greetingMessage, Date.now(), "system");
   }
 
-  const target = (e?.target as HTMLElement) || document.body;
-  cleanup = autoUpdate(target, containerElement, () => {
-    computePosition(target, containerElement, {
-      placement: "top-start",
-      middleware: [flip(), shift({ crossAxis: true, padding: 8 })],
-      strategy: "fixed",
-    }).then(({ x, y }) => {
-      Object.assign(containerElement.style, {
-        left: `${x}px`,
-        top: `${y}px`,
-      });
-    });
-  });
+  // Position the widget at the bottom right
+  positionWidget();
 
   trap.activate();
 
@@ -148,17 +160,17 @@ function open(e: Event) {
   document
     .getElementById("buildship-chat-widget__form")!
     .addEventListener("submit", submit);
+
+  // Add resize listener
+  window.addEventListener('resize', positionWidget);
 }
 
 function close() {
   trap.deactivate();
-
   containerElement.innerHTML = "";
-
   containerElement.remove();
   optionalBackdrop.remove();
-  cleanup();
-  cleanup = () => {};
+  window.removeEventListener('resize', positionWidget);
 }
 
 async function createNewMessageEntry(
