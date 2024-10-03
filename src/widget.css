@@ -85,6 +85,9 @@
   font-family: inherit;
   font-size: 1rem;
   color: var(--buildship-chat-widget-primary-color-text);
+  bottom: 80px; /* Adjust this value based on your button's height plus desired spacing */
+  right: 24px; /* Match this with your button's right positioning */
+  transition: all 0.3s ease; /* Smooth transition when opening/closing */
 }
 #buildship-chat-widget__container * {
   box-sizing: border-box;
@@ -323,4 +326,14 @@
   background-color: var(--buildship-chat-widget-border-color);
   opacity: 0.5;
   cursor: default;
+}
+
+@media (max-width: 480px) {
+  #buildship-chat-widget__container {
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+  }
 }

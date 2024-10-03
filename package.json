@@ -1,6 +1,6 @@
 {
   "name": "@assistable/chat-widget",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A chat widget that can be paired with Assistable workflows built using the Assistant API.",
   "repository": {
     "type": "git",
