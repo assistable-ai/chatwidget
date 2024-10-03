@@ -53,7 +53,7 @@ const config: WidgetConfig = {
 
 let cleanup = () => {};
 
-async function init() {
+function init() {
   const styleElement = document.createElement("style");
   styleElement.innerHTML = css;
 
@@ -61,20 +61,28 @@ async function init() {
 
   config.location_id = getLocationIdFromUrl();
 
-  // Slight delay to allow DOMContent to be fully loaded
-  // (particularly for the button to be available in the `if (config.openOnLoad)` block below).
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  // Use setTimeout instead of Promise
+  setTimeout(() => {
+    const button = document.querySelector("[data-buildship-chat-widget-button]");
+    if (button) {
+      button.addEventListener("click", (e) => {
+        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+        if (isExpanded) {
+          close();
+        } else {
+          open(e);
+        }
+      });
+      button.setAttribute('aria-expanded', 'false');
+    }
 
-  document
-    .querySelector("[data-buildship-chat-widget-button]")
-    ?.addEventListener("click", open);
-
-  if (config.openOnLoad) {
-    const target = document.querySelector(
-      "[data-buildship-chat-widget-button]"
-    );
-    open({ target } as Event);
-  }
+    if (config.openOnLoad) {
+      const target = document.querySelector("[data-buildship-chat-widget-button]");
+      if (target) {
+        open({ target } as unknown as Event);
+      }
+    }
+  }, 500);
 }
 window.addEventListener("load", init);
 
@@ -154,7 +162,10 @@ function open(e: Event) {
   if (config.closeOnOutsideClick) {
     document
       .getElementById(WIDGET_BACKDROP_ID)!
-      .addEventListener("click", close);
+      .addEventListener("click", (e) => {
+        e.preventDefault();
+        close();
+      });
   }
 
   document
@@ -163,6 +174,13 @@ function open(e: Event) {
 
   // Add resize listener
   window.addEventListener('resize', positionWidget);
+
+  // Update button state
+  const button = document.querySelector("[data-buildship-chat-widget-button]") as HTMLElement;
+  if (button) {
+    button.setAttribute('aria-expanded', 'true');
+    button.classList.add('active');
+  }
 }
 
 function close() {
@@ -171,6 +189,13 @@ function close() {
   containerElement.remove();
   optionalBackdrop.remove();
   window.removeEventListener('resize', positionWidget);
+
+  // Reset button state
+  const button = document.querySelector("[data-buildship-chat-widget-button]") as HTMLElement;
+  if (button) {
+    button.setAttribute('aria-expanded', 'false');
+    button.classList.remove('active');
+  }
 }
 
 async function createNewMessageEntry(
